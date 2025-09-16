@@ -5,6 +5,7 @@
       efi
       systemd-boot
       pc
+      dev
     ];
   };
 }
