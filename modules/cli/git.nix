@@ -1,5 +1,12 @@
 {config, ...}: {
   flake.modules.nixos.base = {
+    programs.git = {
+      enable = true;
+      config = {
+        safe.directory = ["/etc/nixos"];
+      };
+    };
+
     home-manager.users.${config.flake.meta.owner.username}.imports = [
       {
         programs.git = {

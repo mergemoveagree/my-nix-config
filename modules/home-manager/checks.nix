@@ -8,6 +8,10 @@
     checks =
       {
         base = with config.flake.modules.homeManager; [base];
+        gui = with config.flake.modules.homeManager; [
+          base
+          gui
+        ];
       }
       |> lib.mapAttrs' (
         name: modules: {

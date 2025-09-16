@@ -5,6 +5,6 @@
       enableSwap = true;
       swapSize = 4;
       enableDiscards = true;
-    };   
+    };
   };
 }
