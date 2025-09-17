@@ -1,18 +1,13 @@
-{config, ...}: {
-  flake.modules.nixos.pc = {pkgs, ...}: {
+{
+  flake.modules.nixos.pc = {pkgs, ...}: let
+    protonvpn-autostart = pkgs.makeAutostartItem {
+      name = "protonvpn-app";
+      package = pkgs.protonvpn-gui;
+    };
+  in {
     environment.systemPackages = with pkgs; [
       protonvpn-gui
-    ];
-
-    home-manager.users.${config.flake.meta.owner.username}.imports = [
-      {
-        xdg.autostart = {
-          enable = true;
-          entries = [
-            "${pkgs.protonvpn-gui}/share/applications/protonvpn-app.desktop"
-          ];
-        };
-      }
+      protonvpn-autostart
     ];
   };
 }
