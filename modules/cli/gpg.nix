@@ -24,4 +24,12 @@
       })
     ];
   };
+
+  flake.modules.nixos.pc = {
+    home-manager.users.${config.flake.meta.owner.username}.imports = [
+      ({pkgs, ...}: {
+        services.gpg-agent.pinentry.package = pkgs.pinentry-qt;
+      })
+    ];
+  };
 }
