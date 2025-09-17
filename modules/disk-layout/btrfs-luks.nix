@@ -6,6 +6,8 @@
       options = ["bind"];
     };
 
+    virtualisation.docker.storageDriver = "btrfs";
+
     disko.devices.disk = {
       disk0 = {
         type = "disk";

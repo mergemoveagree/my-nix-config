@@ -5,6 +5,10 @@
         type = lib.types.string;
         description = "The name of the first physical disk";
       };
+      disk1 = lib.mkOption {
+        type = lib.types.string;
+        description = "The name of the second physical disk";
+      };
 
       enableSwap = lib.mkEnableOption "swap";
       swapSize = lib.mkOption {
