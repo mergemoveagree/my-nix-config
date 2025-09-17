@@ -6,6 +6,7 @@
       systemd-boot
       pc
       dev
+      gaming
     ];
   };
 }
