@@ -15,6 +15,11 @@
 
     import-tree.url = "github:vic/import-tree";
 
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
     home-manager = {
