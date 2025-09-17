@@ -3,9 +3,9 @@
   lib,
   ...
 }: {
-  flake.modules.nixos.base = {pkgs, ...}: {
+  flake.modules.nixos.base = {
     home-manager.users.${config.flake.meta.owner.username}.imports = [
-      {
+      ({pkgs, ...}: {
         programs.gpg = {
           enable = true;
           publicKeys = [
@@ -21,7 +21,7 @@
           enableScDaemon = true;
           pinentry.package = lib.mkDefault pkgs.pinentry-tty;
         };
-      }
+      })
     ];
   };
 }
