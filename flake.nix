@@ -47,6 +47,11 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    zsh-auto-notify = {
+      flake = false;
+      url = "github:MichaelAquilina/zsh-auto-notify";
+    };
   };
 
   outputs = inputs:

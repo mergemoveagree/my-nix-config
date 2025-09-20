@@ -1,6 +1,3 @@
 {
-  flake.modules.homeManager.base.programs.eza = {
-    enable = true;
-    enableBashIntegration = true;
-  };
+  flake.modules.homeManager.base.programs.eza.enable = true;
 }

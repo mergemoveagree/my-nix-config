@@ -1,11 +1,8 @@
 {
   flake.modules.homeManager.base = {
-    programs.zoxide = {
-      enable = true;
-      enableBashIntegration = true;
-    };
+    programs.zoxide.enable = true;
 
-    programs.bash.shellAliases = {
+    home.shellAliases = {
       cd = "z";
     };
   };
