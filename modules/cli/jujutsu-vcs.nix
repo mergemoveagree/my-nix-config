@@ -19,6 +19,11 @@
             behavior = "own";
             key = config.flake.meta.owner.email;
           };
+
+          aliases = {
+            tug = ["bookmark" "move" "main" "--to" "@"];
+            "tug-" = ["bookmark" "move" "main" "--to" "@-"];
+          };
         };
       }
     ];
