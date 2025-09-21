@@ -1,9 +1,13 @@
-{lib, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   flake.modules = {
     nixos.base = {pkgs, ...}: {
       programs.zsh.enable = true;
 
-      users.defaultUserShell = pkgs.zsh;
+      users.users.${config.flake.meta.owner.username}.shell = pkgs.zsh;
     };
 
     homeManager.base = {config, ...}: let
