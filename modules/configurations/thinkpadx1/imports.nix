@@ -7,6 +7,8 @@
       pc
       dev
       hardening
+
+      desktop-plasma
     ];
   };
 }

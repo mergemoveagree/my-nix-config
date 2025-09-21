@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.pc = {pkgs, ...}: {
+  flake.modules.nixos.desktop-plasma = {pkgs, ...}: {
     services.displayManager.sddm = {
       enable = true;
       settings.General.DisplayServer = "wayland";

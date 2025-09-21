@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  flake.modules.homeManager.gui = {
+  flake.modules.homeManager.desktop-plasma = {
     imports = [inputs.plasma-manager.homeModules.plasma-manager];
     programs.plasma = {
       enable = true;

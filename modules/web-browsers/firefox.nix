@@ -1,4 +1,8 @@
 {withSystem, ...}: {
+  flake.modules.homeManager.desktop-plasma = {pkgs, ...}: {
+    programs.firefox.nativeMessagingHosts = [pkgs.kdePackages.plasma-browser-integration];
+  };
+
   flake.modules.homeManager.gui = {pkgs, ...}: {
     home.sessionVariables = {
       MOZ_ENABLE_WAYLAND = "1";
@@ -8,7 +12,6 @@
     programs.firefox = {
       enable = true;
       languagePacks = ["en_US"];
-      nativeMessagingHosts = [pkgs.kdePackages.plasma-browser-integration];
       policies = {
         SearchSuggestEnabled = false;
         FirefoxSuggest = {

@@ -7,6 +7,8 @@
       pc
       dev
       gaming
+
+      desktop-plasma
     ];
   };
 }
