@@ -2,17 +2,32 @@
   flake.modules.homeManager.gui = {pkgs, ...}: {
     fonts.fontconfig.enable = true;
     home.packages = with pkgs; [
-      nerd-fonts.fira-code
+      nerd-fonts.departure-mono
       font-awesome
     ];
 
-    programs.ghostty = {
+    programs.alacritty = {
       enable = true;
-      enableBashIntegration = true;
       settings = {
-        font-family = "FiraCode Nerd Font Mono";
-        font-size = 12;
-        theme = "DjangoRebornAgain";
+        general = {
+          import = [
+            ./base16_default_dark.toml
+          ];
+        };
+        font = {
+          normal = {
+            family = "DepartureMono Nerd Font Mono";
+            style = "Regular";
+          };
+        };
+      };
+    };
+  };
+
+  flake.modules.homeManager.desktop-plasma = {
+    programs.plasma.shortcuts = {
+      "services/Alacritty.desktop" = {
+        _launch = "Meta+Q";
       };
     };
   };

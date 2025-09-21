@@ -15,12 +15,6 @@
           launch = "Meta+R";
         };
       };
-
-      shortcuts = {
-        "services/com.mitchellh.ghostty.desktop" = {
-          "new-window" = "Meta+Q";
-        };
-      };
     };
   };
 }
