@@ -4,7 +4,7 @@
       element-desktop
       protonmail-desktop
       signal-desktop
-      vesktop
+      webcord
     ];
   };
 }
