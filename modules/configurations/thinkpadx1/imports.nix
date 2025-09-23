@@ -9,6 +9,7 @@
       hardening
 
       desktop-plasma
+      laptop
     ];
   };
 }
