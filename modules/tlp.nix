@@ -15,4 +15,11 @@
       };
     };
   };
+
+  flake.modules.nixos.gaming = {config, ...}: {
+    services.tlp.settings = lib.mkIf config.services.tlp.enable {
+      TLP_DEFAULT_MODE = "AC";
+      TLP_PERSISTENT_DEFAULT = 1;
+    };
+  };
 }
