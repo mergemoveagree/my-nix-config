@@ -1,0 +1,33 @@
+name: update-flake-lock
+on:
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  update-flake-lock:
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{secrets.GITHUB_TOKEN}}
+      - id: update
+        uses: DeterminateSystems/update-flake-lock@v23
+        env:
+          GIT_COMMIT_MESSAGE: 'build(flake.lock): update flake.lock'
+        with:
+          nix-options: --accept-flake-config
+      - name: nix flake check
+        run: nix flake check --accept-flake-config
+      - name: Merge
+        run:
+          gh pr merge --auto "${{ steps.update.outputs.pull-request-number }}" --rebase
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        if: ${{ steps.update.outputs.pull-request-number != '' }}
