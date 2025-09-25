@@ -4,34 +4,71 @@ on:
   schedule:
     - cron: '0 7 * * *'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  update-flake-lock:
+  nix-matrix-and-update:
     permissions:
       contents: write
       id-token: write
       issues: write
       pull-requests: write
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      pr-number: ${{ steps.update.outputs.pull-request-number }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: wimpysworld/nothing-but-nix@main
+      - uses: actions/checkout@v5
+      - name: Check Nix flake inputs
+        uses: DeterminateSystems/flake-checker-action@main
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
         with:
-          hatchet-protocol: 'carve'
-          witness-carnage: true
-      - uses: cachix/install-nix-action@v31
-        with:
-          github_access_token: ${{secrets.GITHUB_TOKEN}}
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - id: update
         uses: DeterminateSystems/update-flake-lock@v23
         with:
           nix-options: --accept-flake-config
           commit-msg: 'build(flake.lock): update flake.lock'
-      - name: nix flake check
-        run: nix flake check --accept-flake-config
+      - id: set-matrix
+        name: Generate Nix Matrix
+        run: |
+          set -Eeu
+          matrix="$(nix eval --json '.#githubActions.matrix' --accept-flake-config)"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  nix-build:
+    name: ${{ matrix.name }} (${{ matrix.system }})
+    needs: nix-matrix-and-update
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: ${{fromJSON(needs.nix-matrix-and-update.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: 'holster'
+          witness-carnage: true
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
+      - run: nix build -L '.#${{ matrix.attr }}' --accept-flake-config
+
+  merge-pr:
+    runs-on: ubuntu-latest
+    needs: [nix-build, nix-matrix-and-update]
+    steps:
+      - uses: actions/checkout@v5
       - name: Merge
         run:
-          gh pr merge --auto "${{ steps.update.outputs.pull-request-number }}" --rebase
+          gh pr merge --auto "${{ needs.nix-matrix-and-update.outputs.pr-number}}" --rebase
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        if: ${{ steps.update.outputs.pull-request-number != '' }}
+        if: ${{ needs.nix-matirx-and-update.outputs.pr-number != '' }}
+    
