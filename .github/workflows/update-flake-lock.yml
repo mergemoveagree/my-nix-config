@@ -70,5 +70,5 @@ jobs:
           gh pr merge --auto "${{ needs.nix-matrix-and-update.outputs.pr-number}}" --rebase
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        if: ${{ needs.nix-matirx-and-update.outputs.pr-number != '' }}
+        if: ${{ needs.nix-matrix-and-update.outputs.pr-number != '' }}
     
