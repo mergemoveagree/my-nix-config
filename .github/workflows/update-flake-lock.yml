@@ -1,4 +1,4 @@
-name: update-flake-lock
+name: Flake
 on:
   workflow_dispatch: # allows manual triggering
   schedule:
@@ -12,6 +12,11 @@ jobs:
   lockfile:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.MMA_APP_ID }}
+          private-key: ${{ secrets.MMA_PRIVATE_KEY }}
       - uses: actions/checkout@v5
       - name: Check Nix flake inputs
         uses: DeterminateSystems/flake-checker-action@main
@@ -22,13 +27,15 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.generate-token.outputs.token }}
       #- uses: DeterminateSystems/magic-nix-cache-action@main
       #  with:
       #    diagnostic-endpoint: ''
       #    use-flakehub: false
       - id: update
+        name: Update flake inputs
         uses: DeterminateSystems/update-flake-lock@v27
         with:
           nix-options: --accept-flake-config
           commit-msg: 'build(flake.lock): update flake.lock'
+          token: ${{ steps.generate-token.outputs.token }}
