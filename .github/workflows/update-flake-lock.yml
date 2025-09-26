@@ -28,6 +28,7 @@ jobs:
       #    diagnostic-endpoint: ''
       #    use-flakehub: false
       - id: update
+        name: Update flake inputs
         uses: DeterminateSystems/update-flake-lock@v27
         with:
           nix-options: --accept-flake-config
