@@ -35,7 +35,7 @@ jobs:
       #    diagnostic-endpoint: ''
       #    use-flakehub: false
       - id: update
-        uses: DeterminateSystems/update-flake-lock@v23
+        uses: DeterminateSystems/update-flake-lock@v27
         with:
           nix-options: --accept-flake-config
           commit-msg: 'build(flake.lock): update flake.lock'
