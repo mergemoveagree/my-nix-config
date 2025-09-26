@@ -5,6 +5,7 @@ on:
     - cron: '0 7 * * *'
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -32,3 +33,8 @@ jobs:
         with:
           nix-options: --accept-flake-config
           commit-msg: 'build(flake.lock): update flake.lock'
+      - uses: benc-uk/workflow-dispatch@v1
+        if: ${{ contains(fromJSON('["created", "updated"]'), steps.update.outputs.pull-request-operation) }}
+        with:
+          workflow: ci.yml
+          ref: refs/pull/${{ steps.update.outputs.pull-request-number }}/head
