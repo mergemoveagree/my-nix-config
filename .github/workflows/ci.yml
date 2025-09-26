@@ -1,6 +1,10 @@
 name: CI
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: [Flake]
+    types: [completed]
+    branches: [update_flake_lock_action]
   push:
     branches:
       - main

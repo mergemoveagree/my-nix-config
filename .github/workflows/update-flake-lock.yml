@@ -1,4 +1,4 @@
-name: update-flake-lock
+name: Flake
 on:
   workflow_dispatch: # allows manual triggering
   schedule:
@@ -28,6 +28,7 @@ jobs:
       #    diagnostic-endpoint: ''
       #    use-flakehub: false
       - id: update
+        name: Update flake inputs
         uses: DeterminateSystems/update-flake-lock@v27
         with:
           nix-options: --accept-flake-config
