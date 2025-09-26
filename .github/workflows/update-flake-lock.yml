@@ -1,6 +1,7 @@
 name: update-flake-lock
 on:
   workflow_dispatch: # allows manual triggering
+  pull_request:
   schedule:
     - cron: '0 7 * * *'
 
@@ -17,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      pr-number: ${{ steps.update.outputs.pull-request-number }}
     steps:
       - uses: actions/checkout@v5
       - name: Check Nix flake inputs
@@ -35,6 +35,7 @@ jobs:
       #    diagnostic-endpoint: ''
       #    use-flakehub: false
       - id: update
+        if: ${{ github.event_name != 'pull_request' }}
         uses: DeterminateSystems/update-flake-lock@v27
         with:
           nix-options: --accept-flake-config
@@ -66,16 +67,3 @@ jobs:
       #    diagnostic-endpoint: ''
       #    use-flakehub: false
       - run: nix build -L '.#${{ matrix.attr }}' --accept-flake-config
-
-  merge-pr:
-    runs-on: ubuntu-latest
-    needs: [nix-build, nix-matrix-and-update]
-    steps:
-      - uses: actions/checkout@v5
-      - name: Merge
-        run:
-          gh pr merge --auto "${{ needs.nix-matrix-and-update.outputs.pr-number}}" --rebase
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        if: ${{ needs.nix-matrix-and-update.outputs.pr-number != '' }}
-    
