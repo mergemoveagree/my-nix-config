@@ -11,8 +11,10 @@
             alejandra
             nixd
             gopls
+            tailwindcss-language-server
             typescript-language-server
             superhtml
+            vscode-langservers-extracted
           ];
           languages = {
             language = [
@@ -31,23 +33,37 @@
               }
               {
                 name = "html";
-                language-servers = ["superhtml"];
+                language-servers = ["superhtml" "tailwindcss-ls"];
                 file-types = ["tmpl" "html"];
               }
+              {
+                name = "css";
+                language-servers = ["vscode-css-language-server" "tailwindcss-ls"];
+              }
+              {
+                name = "json";
+                language-servers = ["vscode-json-language-server"];
+              }
             ];
-            language-server.nixd = {
-              command = "nixd";
-              args = ["--semantic-tokens=true"];
-              config.nixd = let
-                myFlake = "(builtins.getFlake \"/etc/nixos\")";
-                nixosOpts = "${myFlake}.nixosConfigurations.${osConfig.networking.hostName}.options";
-              in {
-                nixpkgs.expr = "import ${myFlake}.inputs.nixpkgs { }";
-                formatting.command = ["alejandra"];
-                options = {
-                  nixos.expr = nixosOpts;
-                  home-manager.expr = "${nixosOpts}.home-manager.users.type.getSubOptions []";
+            language-server = {
+              nixd = {
+                command = "nixd";
+                args = ["--semantic-tokens=true"];
+                config.nixd = let
+                  myFlake = "(builtins.getFlake \"/etc/nixos\")";
+                  nixosOpts = "${myFlake}.nixosConfigurations.${osConfig.networking.hostName}.options";
+                in {
+                  nixpkgs.expr = "import ${myFlake}.inputs.nixpkgs { }";
+                  formatting.command = ["alejandra"];
+                  options = {
+                    nixos.expr = nixosOpts;
+                    home-manager.expr = "${nixosOpts}.home-manager.users.type.getSubOptions []";
+                  };
                 };
+              };
+              tailwindcss-ls = {
+                command = "tailwindcss-language-server";
+                args = ["--stdio"];
               };
             };
           };
