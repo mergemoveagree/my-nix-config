@@ -1,41 +1,53 @@
-let
-  timeServers = [
-    "ohio.time.system76.com"
-    "oregon.time.system76.com"
-    "virginia.time.system76.com"
-    "stratum1.time.cifelli.xyz"
-    "time.cifelli.xyz"
-    "time.txryan.com"
-  ];
-in
-  {lib, ...}: {
-    flake.modules.nixos.base = {
-      services.automatic-timezoned.enable = true;
+{lib, ...}: let
+  gos-chrony-conf = builtins.fetchurl {
+    url = "https://raw.githubusercontent.com/GrapheneOS/infrastructure/3691bd8e5140e918f5647e6d22da1c3e39cd93fe/etc/chrony.conf";
+    sha256 = "sha256:0cfd5dwimiv4sadmknnc4l4zm7y49bmdnjdk7wc8wvnhfri3mick";
+  };
+in {
+  flake.modules.nixos.base = {pkgs, ...}: {
+    services = {
+      automatic-timezoned.enable = true;
       # https://github.com/NixOS/nixpkgs/issues/68489#issuecomment-1484030107
-      services.geoclue2.enableDemoAgent = lib.mkForce true;
+      geoclue2.enableDemoAgent = lib.mkForce true;
 
-      services.chrony = {
+      timesyncd.enable = false;
+      chrony = {
         enable = true;
-        enableNTS = true;
-        #enableRTCTrimming = config.hostSpec.hasRtc;
-        servers = timeServers;
-        serverOption = "iburst";
-        #extraFlags = lib.optional (! config.hostSpec.hasRtc) "-s";
+
+        # Disable 'rtcautotrim' so that 'rtcsync' can be used instead. Either
+        # this or 'rtcsync' must be disabled to complete a successful rebuild,
+        # or an error will be thrown due to these options conflicting with
+        # eachother.
+        enableRTCTrimming = false;
+
+        # Initstepslew "is deprecated in favour of the makestep directive"
+        # according to:
+        # https://chrony-project.org/doc/4.6/chrony.conf.html#initstepslew.
+        # The fetched chrony config already has makestep enabled, so
+        # initstepslew is disabled (it is enabled by default).
+        initstepslew.enabled = false;
+
+        # Since servers are declared by the fetched chrony config, set the
+        # NixOS option to [ ] to prevent the default values from interfering.
+        servers = lib.mkForce [];
+
+        # Enable seccomp filter for chronyd (-F 1) and reload server history on
+        # restart (-r). The -r flag is added to match GrapheneOS's original
+        # chronyd configuration.
+        extraFlags = [
+          "-F 1"
+          "-r"
+        ];
+
+        # Borrowing chrony config from GrapheneOS sever infra.
+        # Override the leapseclist path with the NixOS-compatible path to
+        # leap-seconds.list using the tzdata package. This is necessary because
+        # NixOS doesn't use standard FHS paths like /usr/share/zoneinfo.
         extraConfig = ''
-          port 0
-          cmdport 0
-          hwtimestamp *
+          ${builtins.readFile gos-chrony-conf}
+          leapseclist ${pkgs.tzdata}/share/zoneinfo/leap-seconds.list
         '';
       };
-
-      networking.timeServers = timeServers;
-      networking.hosts = {
-        "3.134.129.152" = ["ohio.time.system76.com"];
-        "52.10.183.132" = ["oregon.time.system76.com"];
-        "3.220.42.39" = ["virginia.time.system76.com"];
-        "143.42.132.139" = ["stratum1.time.cifelli.xyz"];
-        "50.116.42.84" = ["time.cifelli.xyz"];
-        "15.204.249.252" = ["time.txryan.com"];
-      };
     };
-  }
+  };
+}
