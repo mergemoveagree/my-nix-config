@@ -49,5 +49,7 @@ in {
         '';
       };
     };
+
+    systemd.tmpfiles.settings."restrict-chrony-conf"."/var/lib/chrony/chrony.keys".z.mode = "0400";
   };
 }
