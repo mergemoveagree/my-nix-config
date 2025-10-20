@@ -1,8 +1,4 @@
-{
-  config,
-  withSystem,
-  ...
-}: {
+{config, ...}: {
   flake.modules.nixos.dev = {
     home-manager.users.${config.flake.meta.owner.username}.imports = [
       ({
@@ -19,8 +15,6 @@
             typescript-language-server
             superhtml
             vscode-langservers-extracted
-
-            (withSystem pkgs.stdenv.hostPlatform.system ({inputs', ...}: inputs'.nixpkgs-unstable.legacyPackages.rust-analyzer))
           ];
           languages = {
             language = [
@@ -49,10 +43,6 @@
               {
                 name = "json";
                 language-servers = ["vscode-json-language-server"];
-              }
-              {
-                name = "rust";
-                language-servers = ["rust-analyzer"];
               }
             ];
             language-server = {
