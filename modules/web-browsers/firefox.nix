@@ -151,6 +151,8 @@
             privacy-redirect
             proton-pass
             ublock-origin
+            addy_io
+            bitwarden
           ]);
       };
     };
