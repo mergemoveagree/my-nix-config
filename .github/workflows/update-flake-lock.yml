@@ -17,7 +17,7 @@ jobs:
         with:
           app-id: ${{ secrets.MMA_APP_ID }}
           private-key: ${{ secrets.MMA_PRIVATE_KEY }}
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Check Nix flake inputs
         uses: DeterminateSystems/flake-checker-action@main
         with:
