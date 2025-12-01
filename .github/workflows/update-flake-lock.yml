@@ -34,7 +34,7 @@ jobs:
       #    use-flakehub: false
       - id: update
         name: Update flake inputs
-        uses: DeterminateSystems/update-flake-lock@v27
+        uses: DeterminateSystems/update-flake-lock@v28
         with:
           nix-options: --accept-flake-config
           commit-msg: 'build(flake.lock): update flake.lock'
